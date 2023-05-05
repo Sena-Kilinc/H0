@@ -103,3 +103,6 @@ while running:
 
 # Pygame: Quit
 pygame.quit()
+
+
+print("Number of steps taken:", solution.steps[0])
