@@ -78,17 +78,18 @@ def evaluate(chrom):
     chrom.dv2 = decodeValue(chrom.binaryString, GENE1, GENE1+GENE2-1)
     chrom.x1 = scalingFunction(chrom.dv1, GENE1)
     chrom.x2 = scalingFunction(chrom.dv2, GENE2)
-
-    # Calculate fitness from the objective function
-    # chrom.fitness = 100.0 * math.pow((chrom.x2 - math.pow(chrom.x1, 2)), 2) + \
-    #    math.pow(1 - chrom.x1, 2)   # Rosenbrock function
-    chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + \
-        (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # rastring function
+    if chrom.x1 < -20 or chrom.x1 > 20 or chrom.x2 < -20 or chrom.x2 > 20:
+        # Apply death penalty
+        chrom.fitness = -1000
+    else:
+        # Calculate fitness from the objective function
+        # chrom.fitness = 100.0 * math.pow((chrom.x2 - math.pow(chrom.x1, 2)), 2) + \
+        #    math.pow(1 - chrom.x1, 2)   # Rosenbrock function
+        chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + \
+            (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # rastring function
 
 
 # Binary Tournament Selection operator
-
-
 def selection(pop):
     matingPool = []
     for i in range(N):
