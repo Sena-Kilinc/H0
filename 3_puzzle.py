@@ -68,31 +68,45 @@ class Node:
         return self.f() < other.f()
 
 
-# Define the possible moves
 def moves(state):
-    '''
-    This function generates all possible moves from the given state.
-    It takes a 2D list representing the puzzle state as input and yields all possible next states.
-    The time complexity of this function is O(n^2) where n is the size of the puzzle state.
-    The space complexity is O(n^2), since it creates a copy of the input state for each possible move.
-    Arguments:
-    state -- a 2D list representing the current state of the puzzle
-    Returns:
-    A generator object that generates all possible next states for the current state of the puzzle
-
-    '''
     i, j = next((i, j) for i in range(3) for j in range(
-        3) if state[i][j] == 0)  # Here, we use a generator expression to find the position (i, j) of the empty tile in the input state. The next function is then used to get the first value produced by the generator, which is the position of the empty tile.
-    # This line initializes a loop that iterates over four pairs of numbers representing the possible moves (up, right, down, and left) from the position of the empty tile. Each move is represented as a tuple of two numbers (di, dj) representing the row and column offsets for that move.
+        3) if state[i][j] == 0)
+    possible_moves = []
     for di, dj in ((0, 1), (1, 0), (0, -1), (-1, 0)):
-        # This line checks whether the next position resulting from the move (di, dj) is within the bounds of the puzzle. If not, that move is not valid and is skipped
         if 0 <= i+di < 3 and 0 <= j+dj < 3:
-            # Here, a copy of the input state is created by copying each row in the list using slice notation.
             new_state = [row[:] for row in state]
             new_state[i][j], new_state[i+di][j +
-                                             dj] = new_state[i+di][j+dj], new_state[i][j]  # This line swaps the empty tile with the tile at the next position resulting from the move (di, dj) in the copied new_state.
-            # The yield keyword is used to return the new state as a generator object, which can be used to generate all possible next states for the current state of the puzzle.
-            yield new_state
+                                             dj] = new_state[i+di][j+dj], new_state[i][j]
+            possible_moves.append(new_state)
+    return possible_moves
+
+
+# Define the possible moves
+
+# This defines a function called moves that takes a 2D list representing the current state of the puzzle as input.
+def moves(state):
+    '''
+    This function generates all possible moves that can be made from a given state in the 8-puzzle problem. 
+    It takes a 2D list representing the puzzle state as input and returns a list of all possible successor states.
+    Time complexity: O(1)
+    Space complexity: O(1)
+    '''
+    i, j = next((i, j) for i in range(3) for j in range(
+        3) if state[i][j] == 0)  # This line finds the row i and column j of the empty cell (represented by 0 in the puzzle) in the given state by using the next() function to find the first tuple (i, j) in a generator expression that satisfies the condition state[i][j] == 0. This line assumes that there is only one empty cell in the puzzle.
+    # This line initializes an empty list called possible_moves to store the new states that can be reached by moving the empty cell in different directions.
+    possible_moves = []
+    # This line iterates over each pair (di, dj) in the tuple ((0, 1), (1, 0), (0, -1), (-1, 0)). Each pair represents a direction in which the empty cell can be moved: right, down, left, or up.
+    for di, dj in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+        # This line checks if the empty cell can be moved in the direction represented by the current pair (di, dj) without going out of bounds. It checks that the new row i+di and column j+dj are both between 0 and 2, which are the valid indices of the puzzle.
+        if 0 <= i+di < 3 and 0 <= j+dj < 3:
+            # This line creates a new copy of the state list by using a list comprehension that copies each row of state using the [:] slice notation. This creates a new list of lists that has the same values as state, but is a separate object in memory. This ensures that the original state list is not modified during the execution of the moves() function.
+            new_state = [row[:] for row in state]
+            new_state[i][j], new_state[i+di][j +
+                                             dj] = new_state[i+di][j+dj], new_state[i][j]   # This line swaps the values of the empty cell (at index (i, j)) with the value of the cell in the direction represented by the current pair (di, dj) (at index (i+di, j+dj)). This creates a new state that is the result of moving the empty cell in the given direction.
+            # This line appends the new state (i.e., the result of moving the empty cell in the given direction) to the list of possible_moves.
+            possible_moves.append(new_state)
+    # Finally, the function returns the list of possible_moves, which contains all the new states that can be reached by moving the empty cell in different directions.
+    return possible_moves
 
 # Define the A* search algorithm
 
