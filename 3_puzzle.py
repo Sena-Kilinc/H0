@@ -67,23 +67,11 @@ class Node:
         '''
         return self.f() < other.f()
 
-
-def moves(state):
-    i, j = next((i, j) for i in range(3) for j in range(
-        3) if state[i][j] == 0)
-    possible_moves = []
-    for di, dj in ((0, 1), (1, 0), (0, -1), (-1, 0)):
-        if 0 <= i+di < 3 and 0 <= j+dj < 3:
-            new_state = [row[:] for row in state]
-            new_state[i][j], new_state[i+di][j +
-                                             dj] = new_state[i+di][j+dj], new_state[i][j]
-            possible_moves.append(new_state)
-    return possible_moves
-
-
 # Define the possible moves
 
 # This defines a function called moves that takes a 2D list representing the current state of the puzzle as input.
+
+
 def moves(state):
     '''
     This function generates all possible moves that can be made from a given state in the 8-puzzle problem. 
