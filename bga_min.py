@@ -3,7 +3,7 @@ import math
 # Constants-Parameters of the BGA
 GENE1 = 10    # length of binary substring for decision variable 1
 GENE2 = 10    # length of binary substring for decision variable 2
-N = 200       # size of population
+N = 500       # size of population 200
 T = 200       # max number of generations
 # UB = 10.0      # upper bound (same for both decision variables) for rosenbrock [1,1] result must be 0
 # LB = -10.0     # lower bound (same for both decision variables) for rosenbrock
