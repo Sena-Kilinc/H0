@@ -249,3 +249,59 @@ if __name__ == '__main__':
 '''
 The if __name__ == '__main__': line ensures that the main() function is only called when the script is run as the main program, and not when it is imported into another script.
 '''
+
+
+''''
+In this code, g(n) is represented by the instance variable g of the Node class. It is calculated as the path cost from the initial state to node n.
+
+In the Node class, g is initialized to 0 for the start node, and for each child node, it is incremented by 1 to account for the cost of moving to that node.
+
+For example, when we create the start node in the solve_puzzle function, we pass the initial state to the Node constructor without specifying a value for g. Since this is the start node, we set g to 0 by default:
+
+scss
+Copy code
+start = Node(start_state)
+When we create a child node in the moves function, we pass the parent node and the new state to the Node constructor, and we set g to the parent's g plus 1, since moving to the child node incurs a cost of 1:
+
+scss
+Copy code
+child = Node(move, node.g+1, node)
+So in this way, the path cost from the start node to each node in the search tree is represented by the g value of that node.
+
+The Manhattan distance is calculated by summing the absolute differences between the row and column indices of two tiles, for each tile in the puzzle, excluding the blank tile.
+
+In the heuristic function of the code you provided, the calculation of the Manhattan distance is done using the following code:
+python
+Copy code
+def heuristic(state):
+    distance = 0
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] != 0:
+                x, y = divmod(state[i][j]-1, 3)
+                distance += abs(x-i) + abs(y-j)
+    return distance
+The function loops through each tile in the puzzle represented by the 2D list state, and for each tile that is not the blank tile, it calculates the row and column indices of the tile in the solved puzzle, using the formula x, y = divmod(state[i][j]-1, 3).
+
+The divmod function takes the value of the tile and subtracts 1 (since the tiles are numbered from 1 to 8), and then divides the result by 3. This gives the row index x and the column index y of the tile in the solved puzzle, since the solved puzzle is represented by the list GOAL_STATE.
+
+Finally, the Manhattan distance is calculated by summing the absolute differences between the current row and column indices of the tile and its indices in the solved puzzle, using the expression distance += abs(x-i) + abs(y-j).
+
+
+
+Yes, the code is consistent. The A* algorithm is both admissible and consistent because the heuristic function satisfies the conditions of both admissibility and consistency. The admissibility condition means that the heuristic never overestimates the actual cost to reach the goal state. The consistency condition means that the heuristic satisfies the triangle inequality, which is that the heuristic value of any node plus the cost of reaching a neighbor must be less than or equal to the heuristic value of that neighbor. In the code, the heuristic function calculates the Manhattan distance between the current state and the goal state, which satisfies both admissibility and consistency conditions.
+
+
+
+heuristic(state): Time complexity is O(1) because it performs a constant number of operations regardless of the size of the state. Space complexity is also O(1) because it only stores a single integer value.
+
+moves(state): Time complexity is O(1) because it performs a constant number of operations regardless of the size of the state. Space complexity is O(1) because it only stores a list of up to 4 new states.
+
+a_star(start): Time complexity depends on the search algorithm's performance, but in the worst case, it has a time complexity of O(b^d), where b is the branching factor and d is the depth of the shallowest goal node. Space complexity is also O(b^d) because it stores all the nodes generated during the search.
+
+solve_puzzle(start_state): This function just wraps the A* algorithm call, so its time and space complexities are the same as those of a_star(start).
+
+Tile(x, y, value): Time complexity is O(1) because it performs a constant number of operations regardless of the size of the state. Space complexity is O(1) because it only stores the tile position and value.
+
+draw_board(state): Time complexity is O(n^2) because it has to iterate over every tile in the 3x3 state. Space complexity is O(1) because it only stores a single tile object at a time.
+'''
