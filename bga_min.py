@@ -69,24 +69,37 @@ def initializeRandomPop(pop):
     for i in range(N):
         pop.append(initializeRandomIndividual())
 
+
 # Evaluate a single chromosome
-
-
 def evaluate(chrom):
     # Values of decision variables are codified at this stage
     chrom.dv1 = decodeValue(chrom.binaryString, 0, GENE1-1)
     chrom.dv2 = decodeValue(chrom.binaryString, GENE1, GENE1+GENE2-1)
     chrom.x1 = scalingFunction(chrom.dv1, GENE1)
     chrom.x2 = scalingFunction(chrom.dv2, GENE2)
+    '''
     if chrom.x1 < -20 or chrom.x1 > 20 or chrom.x2 < -20 or chrom.x2 > 20:
         # Apply death penalty
         chrom.fitness = -1000
+    '''
+    # f an individual violates the upper or lower bounds of the problem, a penalty is applied that is equal to the sum of the differences between the individual's position and the nearest bound for each dimension. The penalty reduces the fitness of the individual, making it less likely to be selected for reproduction, but it does not completely disqualify the individual.
+    # Check if individual violates bounds
+    if chrom.x1 < LB or chrom.x1 > UB or chrom.x2 < LB or chrom.x2 > UB:
+        # Apply a penalty function linear penalty function
+        penalty = max(0, abs(chrom.x1 - LB)) + max(0, abs(chrom.x1 - UB)) + \
+            max(0, abs(chrom.x2 - LB)) + max(0, abs(chrom.x2 - UB))
+        chrom.fitness -= penalty
     else:
         # Calculate fitness from the objective function
-        # chrom.fitness = 100.0 * math.pow((chrom.x2 - math.pow(chrom.x1, 2)), 2) + \
-        #    math.pow(1 - chrom.x1, 2)   # Rosenbrock function
         chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + \
             (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # rastring function
+
+
+'''
+For example, let's say the lower bound (LB) and upper bound (UB) for both decision variables are set to -10 and 10, respectively. If an individual has a position of (12, 8) in the search space, it violates the upper bound for the first dimension and the fitness will be penalized. The penalty for this individual would be:
+
+penalty = max(0, abs(12 - 10)) + max(0, abs(8 - 10)) = 4
+'''
 
 
 # Binary Tournament Selection operator
