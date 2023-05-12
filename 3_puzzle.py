@@ -76,8 +76,7 @@ def moves(state):
     '''
     This function generates all possible moves that can be made from a given state in the 8-puzzle problem. 
     It takes a 2D list representing the puzzle state as input and returns a list of all possible successor states.
-    Time complexity: O(1)
-    Space complexity: O(1)
+    time complexity is still O(n^2). Space complexity is O(n^2) because the function creates a new 3x3 matrix for each possible move.
     '''
     i, j = next((i, j) for i in range(3) for j in range(
         3) if state[i][j] == 0)  # This line finds the row i and column j of the empty cell (represented by 0 in the puzzle) in the given state by using the next() function to find the first tuple (i, j) in a generator expression that satisfies the condition state[i][j] == 0. This line assumes that there is only one empty cell in the puzzle.
@@ -167,6 +166,7 @@ class Tile:
     def __init__(self, x, y, value):
         '''
         This is the constructor method that initializes a new tile object with the given x and y coordinates and value. The rect attribute of the tile is created as a pygame.Rect object with the given coordinates and dimensions calculated as WIDTH//3 and HEIGHT//3, respectively.
+        ): This function initializes a Tile object with x and y coordinates and a value, and creates a Rect object. The time complexity is O(1) since it simply assigns values to variables. Space complexity is O(1).
         '''
         self.rect = pygame.Rect(x, y, WIDTH//3, HEIGHT//3)
         self.value = value
@@ -217,6 +217,8 @@ def main():
     The space complexity of the main function is determined by the space complexity of the solve_puzzle function.
     Additionally, the main function uses Pygame to display the solution on the screen, so it also uses some additional space for Pygame resources such as the screen and font objects. 
     However, this space usage is negligible compared to the space used by the solve_puzzle function.
+    The main loop of the function runs indefinitely until the user closes the window, so the space complexity of the function could be up to O(b^d) if the solution is not found, where b is the branching factor and d is the depth of the search tree. However, the time complexity depends on how long the user chooses to keep the window open.
+    The main function itself contains a simple loop that runs indefinitely until the user closes the window, so its time complexity is constant, or O(1), since the number of iterations is not determined by the input size.
     '''
 
     # Define the starting state of the puzzle
