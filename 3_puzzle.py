@@ -1,27 +1,33 @@
+'''
+This project solves 8-Puzzle Game using A* Search Algorithm.
+The game is 3x3 sliding puzzle and to reach the goal state
+the program must rearrange the tiles in order as:
+1 2 3
+4 5 6
+7 8 0
+@ Sena Kılınç 20191701033
+'''
 import time
 import pygame
 from queue import PriorityQueue
 
-# Define constants
-WIDTH = 300
-HEIGHT = 300
+# Constants for visual presentation of the game.
+WIDTH = 600
+HEIGHT = 600
 FPS = 60
 
-# Define colors
+# Colors for visual presentation of the game.
+WHITE = (255, 250, 240)
 BLACK = (0, 0, 0)
-GRAY = (128, 128, 128)
-WHITE = (255, 255, 255)
+GREEN = (69, 139, 116)
 
-
-# Define the goal state 2D List
+# The goal state for the game as 2D List
 GOAL_STATE = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
 
-# Define the heuristic function
 
-
-def heuristic(state):
+def heuristicManhattan(state):
     '''
-    This function computes the Manhattan distance heuristic for the given state.
+    This function computes the Manhattan distance heuristicManhattan for the given state.
     It takes a 2D list representing the puzzle state as input and returns an integer representing the heuristic cost. 
     The time complexity of this function is O(n^2) where n is the size of the puzzle state.
     The space complexity of this function is O(1).
@@ -31,71 +37,88 @@ def heuristic(state):
     for i in range(3):
         for j in range(3):
             if state[i][j] != 0:  # This code block checks if the current element of the 2D list state is not equal to zero. If the element is not equal to zero, it means that the current tile is not the empty tile, and we need to compute its Manhattan distance heuristic.
-                x, y = divmod(state[i][j]-1, 3)  # This line uses the divmod() function to calculate the row and column indices of the current tile's goal position in the puzzle. The divmod() function takes two arguments: state[i][j]-1, which is the index of the current tile, and 3, which is the number of columns in the puzzle. The divmod() function returns a tuple containing the quotient and remainder of the division operation. The quotient represents the row index of the current tile's goal position, and the remainder represents the column index of the current tile's goal position.
-                # This line calculates the Manhattan distance between the current tile's current position and its goal position using the row and column indices calculated in the previous line. The Manhattan distance is the absolute difference between the row indices plus the absolute difference between the column indices.
-                distance += abs(x-i) + abs(y-j)
-    return distance  # This line calculates the Manhattan distance between the current tile's current position and its goal position using the row and column indices calculated in the previous line. The Manhattan distance is the absolute difference between the row indices plus the absolute difference between the column indices.
-
-# Define the node class
+                # Index represents the position of the tile in a flattened representation of the puzzle state.
+                index = state[i][j] - 1
+                goalRow = index // 3  # Goal row of the tile
+                goalCol = index % 3  # Goal column of the tile
+                # This line calculates the Manhattan distance between the current tile's current position and its goal position using the row and column indices calculated in the previous line.
+                # The Manhattan distance is the absolute difference between the row indices plus the absolute difference between the column indices.
+                distance += abs(goalRow - i) + abs(goalCol - j)
+    return distance  # Total Manhattan distance heuristic for the puzzle state
 
 
 class Node:
     '''
     This class represents a node in the search tree, which contains the current state, the cost to reach this state, 
-    the estimated cost to reach the goal state (using the heuristic function), and a reference to its parent node.
+    the estimated cost to reach the goal state (using the heuristicManhattan function), and a reference to its parent node.
     '''
 
     def __init__(self, state, g=0, parent=None):
         '''
-        The __init__ method is the constructor for the Node class. It takes three parameters: state, g, and parent. The state parameter represents the current state of the problem being solved, typically represented as a 2D list in this context. The g parameter represents the cost to reach the current state, and the parent parameter is a reference to the parent node in the search tree. If this node is the root node, then the parent parameter should be set to None.
+        The __init__ method is the constructor for the Node class. It takes three parameters: state, g, and parent. 
+        The state parameter represents the current state of the problem being solved, typically represented as a 2D list in this context. 
+        The g parameter represents the cost to reach the current state, 
+        and the parent parameter is a reference to the parent node in the search tree. 
+        If this node is the root node, then the parent parameter should be set to None.
+        The time complexity is O(1), and the space complexity is O(n^2)
         '''
-
         self.state = state  # current state
         self.g = g  # cost to reach current state
-        self.h = heuristic(state)  # estimated cost
-        self.parent = parent
+        self.h = heuristicManhattan(state)  # estimated cost
+        self.parent = parent  # parent node
 
     def f(self):
         '''
-        The f method returns the sum of g and h, where h is the estimated cost to reach the goal state using the heuristic function. This is the cost function used by the search algorithm to determine which nodes to explore first.
+        The f method returns the sum of g and h, where h is the estimated cost to reach the goal state using the heuristic function. 
+        This is the cost function used by the search algorithm to determine which nodes to explore first.
+        The time complexity is O(1), and the space complexity is O(1)
         '''
         return self.g + self.h
 
-    def __lt__(self, other):
+    def __lt__(self, another):
         '''
-        The __lt__ method is used to define the comparison operator for Node objects. In this case, it returns True if the f value of this node is less than the f value of the other node, where other is another Node object being compared to this one. This is used to maintain a priority queue of nodes to explore, where nodes with lower f values are explored first.
+        The compare method is used to define the comparison operator for Node objects. With this objects using the < operator.
+        It returns True if the f value of this node is less than the f value of the another node. 
+        This is used to maintain a priority queue of nodes to explore, where nodes with lower f values are explored first. 
+        The time complexity is O(1), and the space complexity is O(1)
         '''
-        return self.f() < other.f()
-
-# Define the possible moves
-
-# This defines a function called moves that takes a 2D list representing the current state of the puzzle as input.
+        return self.f() < another.f()
 
 
 def moves(state):
     '''
-    This function generates all possible moves that can be made from a given state in the 8-puzzle problem. 
+    This function generates all possible moves that can be made from a given state in the 8-Puzzle Problem. 
     It takes a 2D list representing the puzzle state as input and returns a list of all possible successor states.
-    time complexity is still O(n^2). Space complexity is O(n^2) because the function creates a new 3x3 matrix for each possible move.
+    Time complexity is still O(n^2). Space complexity is O(n^2) because the function creates a new 3x3 matrix for each possible move.
     '''
-    i, j = next((i, j) for i in range(3) for j in range(
-        3) if state[i][j] == 0)  # This line finds the row i and column j of the empty cell (represented by 0 in the puzzle) in the given state by using the next() function to find the first tuple (i, j) in a generator expression that satisfies the condition state[i][j] == 0. This line assumes that there is only one empty cell in the puzzle.
-    # This line initializes an empty list called possible_moves to store the new states that can be reached by moving the empty cell in different directions.
-    possible_moves = []
+    i = None
+    j = None
+    # In nested loop the program fins the row i row i and column j of the empty cell represented by 0 in the puzzle.
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] == 0:
+                break
+        if state[i][j] == 0:
+            break
+    # This line initializes an empty list called possibleMoves to store the new states that can be reached by moving the empty cell in different directions.
+    possibleMoves = []
     # This line iterates over each pair (di, dj) in the tuple ((0, 1), (1, 0), (0, -1), (-1, 0)). Each pair represents a direction in which the empty cell can be moved: right, down, left, or up.
     for di, dj in ((0, 1), (1, 0), (0, -1), (-1, 0)):
         # This line checks if the empty cell can be moved in the direction represented by the current pair (di, dj) without going out of bounds. It checks that the new row i+di and column j+dj are both between 0 and 2, which are the valid indices of the puzzle.
         if 0 <= i+di < 3 and 0 <= j+dj < 3:
-            # This line creates a new copy of the state list by using a list comprehension that copies each row of state using the [:] slice notation. This creates a new list of lists that has the same values as state, but is a separate object in memory. This ensures that the original state list is not modified during the execution of the moves() function.
-            new_state = [row[:] for row in state]
-            new_state[i][j], new_state[i+di][j +
-                                             dj] = new_state[i+di][j+dj], new_state[i][j]   # This line swaps the values of the empty cell (at index (i, j)) with the value of the cell in the direction represented by the current pair (di, dj) (at index (i+di, j+dj)). This creates a new state that is the result of moving the empty cell in the given direction.
-            # This line appends the new state (i.e., the result of moving the empty cell in the given direction) to the list of possible_moves.
-            possible_moves.append(new_state)
-    # Finally, the function returns the list of possible_moves, which contains all the new states that can be reached by moving the empty cell in different directions.
-    return possible_moves
-
-# Define the A* search algorithm
+            # This loop creates a new copy of the state list that copies each row.
+            new_state = []
+            for row in state:
+                new_row = []
+                for element in row:
+                    new_row.append(element)
+                new_state.append(new_row)
+            # This line swaps the values of the empty cell (at index (i, j)) with the value of the cell in the direction represented by the current pair (di, dj) (at index (i+di, j+dj)). This creates a new state that is the result of moving the empty cell in the given direction.
+            new_state[i][j], new_state[i+di][j + dj] = new_state[i+di][j+dj], new_state[i][j]
+            # This line appends the new state (i.e., the result of moving the empty cell in the given direction) to the list of possibleMoves.
+            possibleMoves.append(new_state)
+    # Finally, the function returns the list of possibleMoves, which contains all the new states that can be reached by moving the empty cell in different directions.
+    return possibleMoves
 
 
 def a_star(start):
@@ -107,26 +130,26 @@ def a_star(start):
     and d can be up to the maximum number of moves required to solve the puzzle from the start state.
     The space complexity of this function is also O(b^d) to store the frontier and the visited nodes.
     '''
-    queue = PriorityQueue()  # These lines initialize a priority queue, queue, which is used to keep track of the nodes on the frontier. The start node is added to the queue with its f-score as the priority value. The visited set is used to keep track of the nodes that have already been visited.
-    queue.put((start.f(), start))
-    visited = set()
-    # This is the main loop of the algorithm. It continues until the queue is empty, meaning that there are no more nodes to explore. The node with the lowest f-score is removed from the queue and assigned to the node variable.
+    queue = PriorityQueue()  # These lines initialize a priority queue, queue, which is used to keep track of the nodes on the frontier.
+    queue.put((start.f(), start)) # The start node is added to the queue with its f-score as the priority value.
+    visited = set() # The visited set is used to keep track of the nodes that have already been visited.
+    # This is the main loop of the algorithm. It continues until the queue is empty, meaning that there are no more nodes to explore. 
     while not queue.empty():
-        f, node = queue.get()
-        if node.state == GOAL_STATE:  # If the current node is the goal state, a solution has been found. The function constructs a path from the start state to the goal state by tracing back through the parent nodes of each node in the path. The path is returned in reverse order, starting from the start state.
-            path = []
-            while node.parent:
-                path.append(node.state)
+        f, node = queue.get() # The node with the lowest f-score is removed from the queue and assigned to the node variable.
+        if node.state == GOAL_STATE:  # If the current node is the goal state, a solution has been found.
+            path = [] #
+            while node.parent: # The function constructs a path from the start state to the goal state by tracing back through the parent nodes of each node in the path. 
+                path.append(node.state) 
                 node = node.parent
             path.append(start.state)
-            return path[::-1]
+            return path[::-1] # The path is returned in reverse order, starting from the start state.
         # If the current node is not the goal state, the function adds the state of the node to the visited set.
         visited.add(tuple(map(tuple, node.state)))
-        # The function generates all possible moves from the current state using the moves function, and for each move, it creates a new child node. If the state of the child node has not already been visited, the child node is added to the priority queue with its f-score as the priority value.
+        # The function generates all possible moves from the current state using the moves function, and for each move, it creates a new child node.
         for move in moves(node.state):
-            if tuple(map(tuple, move)) not in visited:
-                child = Node(move, node.g+1, node)
-                queue.put((child.f(), child))
+            if tuple(map(tuple, move)) not in visited: #If the state of the child node has not already been visited
+                child = Node(move, node.g+1, node) # assigning move (state), cost to reach the child node from the start node, and node as parent node
+                queue.put((child.f(), child)) # the child node is added to the priority queue with its f-score as the priority value
 
 
 # Define the puzzle solver function
@@ -184,7 +207,7 @@ class Tile:
         if self.value == 0:
             color = WHITE
         else:
-            color = GRAY
+            color = GREEN
             pygame.draw.rect(surface, BLACK, self.rect, 1)
         pygame.draw.rect(surface, color, self.rect)
         if self.value != 0:
@@ -192,6 +215,7 @@ class Tile:
             text = font.render(str(self.value), True, BLACK)
             text_rect = text.get_rect(center=self.rect.center)
             surface.blit(text, text_rect)
+            pygame.draw.rect(surface, BLACK, self.rect, 1)  # Add border
 
 
 # Define the draw function
@@ -222,7 +246,7 @@ def main():
     '''
 
     # Define the starting state of the puzzle
-    #start_state = [[1, 2, 3], [4, 5, 6], [0, 7, 8]]
+    # start_state = [[1, 2, 3], [4, 5, 6], [0, 7, 8]]
     start_state = [[1, 2, 3], [0, 7, 8], [4, 5, 6], ]
     # Solve the puzzle
     # This line calls the solve_puzzle() function to solve the puzzle using the start_state as the initial state. The resulting path is stored in the path variable.
@@ -250,60 +274,4 @@ if __name__ == '__main__':
     main()
 '''
 The if __name__ == '__main__': line ensures that the main() function is only called when the script is run as the main program, and not when it is imported into another script.
-'''
-
-
-''''
-In this code, g(n) is represented by the instance variable g of the Node class. It is calculated as the path cost from the initial state to node n.
-
-In the Node class, g is initialized to 0 for the start node, and for each child node, it is incremented by 1 to account for the cost of moving to that node.
-
-For example, when we create the start node in the solve_puzzle function, we pass the initial state to the Node constructor without specifying a value for g. Since this is the start node, we set g to 0 by default:
-
-scss
-Copy code
-start = Node(start_state)
-When we create a child node in the moves function, we pass the parent node and the new state to the Node constructor, and we set g to the parent's g plus 1, since moving to the child node incurs a cost of 1:
-
-scss
-Copy code
-child = Node(move, node.g+1, node)
-So in this way, the path cost from the start node to each node in the search tree is represented by the g value of that node.
-
-The Manhattan distance is calculated by summing the absolute differences between the row and column indices of two tiles, for each tile in the puzzle, excluding the blank tile.
-
-In the heuristic function of the code you provided, the calculation of the Manhattan distance is done using the following code:
-python
-Copy code
-def heuristic(state):
-    distance = 0
-    for i in range(3):
-        for j in range(3):
-            if state[i][j] != 0:
-                x, y = divmod(state[i][j]-1, 3)
-                distance += abs(x-i) + abs(y-j)
-    return distance
-The function loops through each tile in the puzzle represented by the 2D list state, and for each tile that is not the blank tile, it calculates the row and column indices of the tile in the solved puzzle, using the formula x, y = divmod(state[i][j]-1, 3).
-
-The divmod function takes the value of the tile and subtracts 1 (since the tiles are numbered from 1 to 8), and then divides the result by 3. This gives the row index x and the column index y of the tile in the solved puzzle, since the solved puzzle is represented by the list GOAL_STATE.
-
-Finally, the Manhattan distance is calculated by summing the absolute differences between the current row and column indices of the tile and its indices in the solved puzzle, using the expression distance += abs(x-i) + abs(y-j).
-
-
-
-Yes, the code is consistent. The A* algorithm is both admissible and consistent because the heuristic function satisfies the conditions of both admissibility and consistency. The admissibility condition means that the heuristic never overestimates the actual cost to reach the goal state. The consistency condition means that the heuristic satisfies the triangle inequality, which is that the heuristic value of any node plus the cost of reaching a neighbor must be less than or equal to the heuristic value of that neighbor. In the code, the heuristic function calculates the Manhattan distance between the current state and the goal state, which satisfies both admissibility and consistency conditions.
-
-
-
-heuristic(state): Time complexity is O(1) because it performs a constant number of operations regardless of the size of the state. Space complexity is also O(1) because it only stores a single integer value.
-
-moves(state): Time complexity is O(1) because it performs a constant number of operations regardless of the size of the state. Space complexity is O(1) because it only stores a list of up to 4 new states.
-
-a_star(start): Time complexity depends on the search algorithm's performance, but in the worst case, it has a time complexity of O(b^d), where b is the branching factor and d is the depth of the shallowest goal node. Space complexity is also O(b^d) because it stores all the nodes generated during the search.
-
-solve_puzzle(start_state): This function just wraps the A* algorithm call, so its time and space complexities are the same as those of a_star(start).
-
-Tile(x, y, value): Time complexity is O(1) because it performs a constant number of operations regardless of the size of the state. Space complexity is O(1) because it only stores the tile position and value.
-
-draw_board(state): Time complexity is O(n^2) because it has to iterate over every tile in the 3x3 state. Space complexity is O(1) because it only stores a single tile object at a time.
 '''
