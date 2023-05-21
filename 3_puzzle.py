@@ -1,7 +1,7 @@
 '''
 This project solves 8-Puzzle Game using A* Search Algorithm.
-The game is 3x3 sliding puzzle and to reach the goal state
-the program must rearrange the tiles in order as:
+The 8 puzzle game is a classic sliding puzzle that consists of a 3x3 grid with eight numbered tiles and one empty space. 
+The objective of the game is to rearrange the tiles from their initial scrambled positions to reach a specific target configuration:
 1 2 3
 4 5 6
 7 8 0
