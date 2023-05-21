@@ -49,8 +49,7 @@ def heuristicManhattan(state):
 
 class Node:
     '''
-    This class represents a node in the search tree, which contains the current state, the cost to reach this state, 
-    the estimated cost to reach the goal state (using the heuristicManhattan function), and a reference to its parent node.
+    This class represents a node in the search tree.
     '''
 
     def __init__(self, state, g=0, parent=None):
@@ -152,19 +151,18 @@ def a_star(start):
                 queue.put((child.f(), child)) # the child node is added to the priority queue with its f-score as the priority value
 
 
-# Define the puzzle solver function
-# This line defines the solve_puzzle function that takes a 2D list representing the start state of the puzzle as input.
 def solve_puzzle(start_state):
     '''
     This function solves the puzzle from the given start state using the A* search algorithm.
     It takes a 2D list representing the start state as input and returns the path from the start state to the goal state if a solution is found, otherwise returns None.
     This function creates a Node object from the given start_state and passes it to a_star() to solve the puzzle.
     The time and space complexity of this function is the same as the a_star function.
+    The time complexity of this function is O(b^d).
+    The space complexity of this function is O(b^d).
     '''
     start = Node(start_state)  # This line creates a Node object from the given start_state by calling the Node class constructor with start_state as the state parameter. The g and parent parameters are not specified, so they default to 0 and None respectively.
-    path = a_star(start)  # This line calls the a_star function with the start Node object as the argument. The a_star function returns the optimal path from the start state to the goal state if a solution is found, otherwise it returns None. The path variable is assigned the result of this function call.
-    # This line returns the path variable, which contains either the optimal path from the start state to the goal state or None if a solution is not found.
-    return path
+    path = a_star(start)  # The path variable is assigned the result of this function call.
+    return path # This line returns the path variable, which contains either the optimal path from the start state to the goal state or None if a solution is not found.
 
 
 # Initialize Pygame
@@ -176,58 +174,56 @@ pygame.display.set_caption("3x3 Sliding Puzzle")
 # This line creates a Clock object, which can be used to keep track of time in the game loop. The clock object is used to limit the frame rate and ensure that the game runs smoothly.
 clock = pygame.time.Clock()
 
-# Define the tile class
-
 
 class Tile:
     '''
     This class represents a tile in the puzzle. 
-    It takes the x and y coordinates of the tile and its value as input
-    The time complexity of the Tile class is O(1) for each of its methods, since the operations performed do not depend on the size of the puzzle. The space complexity is also O(1), since each tile object stores only a few attributes that do not scale with the size of the puzzle.
     '''
 
     def __init__(self, x, y, value):
         '''
-        This is the constructor method that initializes a new tile object with the given x and y coordinates and value. The rect attribute of the tile is created as a pygame.Rect object with the given coordinates and dimensions calculated as WIDTH//3 and HEIGHT//3, respectively.
-        ): This function initializes a Tile object with x and y coordinates and a value, and creates a Rect object. The time complexity is O(1) since it simply assigns values to variables. Space complexity is O(1).
+        This is the constructor method that initializes a new tile object with the given x, y coordinates and value. 
+        The rect attribute of the tile is created as a pygame. Rect object (which represents rectangle) with the given coordinates and dimensions calculated as WIDTH//3 and HEIGHT//3, respectively.
+        The time complexity is O(1).
+        Space complexity is O(1).
         '''
         self.rect = pygame.Rect(x, y, WIDTH//3, HEIGHT//3)
         self.value = value
 
-    '''
-     draw method to draw the tile on the Pygame window. 
-     The time complexity of this class is O(1) and 
-     the space complexity is O(1) to store the tile information.
-    '''
-
     def draw(self, surface):
         '''
-        This method draws the tile on a given surface, which is typically the Pygame window. It first sets the color variable to WHITE if the tile's value is 0, otherwise it sets it to GRAY. If the tile's value is not 0, it draws a rectangle around the tile's rect with a thickness of 1 pixel using pygame.draw.rect(). It then fills the tile's rect with the appropriate color. Finally, if the tile's value is not 0, it renders the value as text using pygame.font.SysFont() with a font size of 50, and blits it onto the surface at the center of the tile's rect.
+        This function draws the tile on a given surface, which is typically the Pygame window.
+        It first sets the color variable to WHITE if the tile's value is 0, otherwise it sets it to GREEN. 
+        If the tile's value is not 0, it draws a rectangle around the tile's rect with a thickness of 1 pixel using pygame.draw.rect().
+        It then fills the tile's rect with the appropriate color. 
+        Finally, if the tile's value is not 0, it renders the value as text using pygame.font.SysFont() with a font size of 50, and blits it onto the surface at the center of the tile's rect.
+        The time complexity is O(1).
+        Space complexity is O(1).
         '''
-        if self.value == 0:
+        if self.value == 0: # If the value of the tile (self.value) is 0, it sets the color variable to WHITE
             color = WHITE
-        else:
+        else: # If the value of the tile is not 0, it sets the color variable to GREEN
             color = GREEN
-            pygame.draw.rect(surface, BLACK, self.rect, 1)
-        pygame.draw.rect(surface, color, self.rect)
-        if self.value != 0:
-            font = pygame.font.SysFont(None, 50)
-            text = font.render(str(self.value), True, BLACK)
-            text_rect = text.get_rect(center=self.rect.center)
-            surface.blit(text, text_rect)
-            pygame.draw.rect(surface, BLACK, self.rect, 1)  # Add border
+        pygame.draw.rect(surface, color, self.rect) # draw the rectangle representing the tile.
+        if self.value != 0: # If the value of the tile is not 0
+            font = pygame.font.SysFont(None, 50) # font size is 50
+            text = font.render(str(self.value), True, BLACK) # value of the tile as text
+            text_rect = text.get_rect(center=self.rect.center) # center the text
+            surface.blit(text, text_rect) # draws the text on the tile's rectangle
+            pygame.draw.rect(surface, BLACK, self.rect, 1) # to create border
 
 
-# Define the draw function
-# This is a function definition for draw_board, which takes in an input state, representing the current state of the puzzle.
 def draw_board(state):
     '''
     This function draws the entire puzzle board on the screen, by creating a Tile object for each tile in the input state and calling its draw() method. 
-    Its time complexity is O(n^2), since it creates a Tile object for each tile, and its space complexity is O(n^2), since it stores all the Tile objects in memory.
+    Its time complexity is O(n^2), since it creates a Tile object for each tile.
+    Its space complexity is O(n^2), since it stores all the Tile objects in memory.
     '''
     for i in range(3):  # This sets up a nested loop to iterate through each row and column of the puzzle.
         for j in range(3):
-            # For each tile, a new Tile object is created with a position determined by the row i and column j. The WIDTH and HEIGHT are the dimensions of the window on which the game is displayed, and // is used to perform integer division. The state[i][j] value is passed to the Tile constructor to determine the number displayed on the tile.
+            # For each tile, a new Tile object is created with a position determined by the row i and column j. 
+            # The WIDTH and HEIGHT are the dimensions of the window on which the game is displayed, 
+            # and // is used to perform integer division. The state[i][j] value is passed to the Tile constructor to determine the number displayed on the tile.
             tile = Tile(j*WIDTH//3, i*HEIGHT//3, state[i][j])
             # The draw() method is called on the Tile object to draw it onto the screen. The screen variable represents the Pygame window on which the game is displayed.
             tile.draw(screen)
@@ -237,41 +233,36 @@ def main():
     '''
     The main function initializes the Pygame window and sets up the starting state of the puzzle. 
     It then calls the solve_puzzle function to solve the puzzle and displays the solution on the Pygame window.
-    The time complexity of the main function is determined by the time complexity of the solve_puzzle function.
-    The space complexity of the main function is determined by the space complexity of the solve_puzzle function.
-    Additionally, the main function uses Pygame to display the solution on the screen, so it also uses some additional space for Pygame resources such as the screen and font objects. 
-    However, this space usage is negligible compared to the space used by the solve_puzzle function.
-    The main loop of the function runs indefinitely until the user closes the window, so the space complexity of the function could be up to O(b^d) if the solution is not found, where b is the branching factor and d is the depth of the search tree. However, the time complexity depends on how long the user chooses to keep the window open.
-    The main function itself contains a simple loop that runs indefinitely until the user closes the window, so its time complexity is constant, or O(1), since the number of iterations is not determined by the input size.
+    The time complexity of the main function is determined by the time complexity of the solve_puzzle function.(O(b^d))
+    The space complexity of the main function is determined by the space complexity of the solve_puzzle function.(O(b^d))
     '''
 
     # Define the starting state of the puzzle
-    # start_state = [[1, 2, 3], [4, 5, 6], [0, 7, 8]]
     start_state = [[1, 2, 3], [0, 7, 8], [4, 5, 6], ]
-    # Solve the puzzle
+
     # This line calls the solve_puzzle() function to solve the puzzle using the start_state as the initial state. The resulting path is stored in the path variable.
     path = solve_puzzle(start_state)
 
-    if path is not None:  # This if-else statement checks if a solution was found by the solve_puzzle() function. If a solution was found (path is not None), the code prints "Solution found!" to the console and draws the puzzle to the Pygame window. The for loop iterates through each state in the path list and calls the draw_board() function to draw the puzzle on the Pygame window. The pygame.display.update() function updates the display to show the new state of the puzzle, and the time.sleep(1) function adds a delay of one second between each state to slow down the animation. If no solution was found, the code prints "No solution found." to the console
-        print("Solution found!")
-        # Draw the puzzle
-        for state in path:
-            draw_board(state)
-            pygame.display.update()
-            time.sleep(1)
-    else:
-        print("No solution found.")
+    if path is not None:  # Checks if a solution was found by the solve_puzzle() function. If a solution was found (path is not None)
+        print("Solution found!") # The code prints "Solution found!" to the console.
+        print("Number of steps:", len(path) - 1) # The code prints how many steps did it take to find solution.
+        # The for loop iterates through each state in the path list  and the time.sleep(1).
+        for state in path: 
+            draw_board(state) #draws the puzzle to the Pygame window.
+            pygame.display.update() # updates the display to show the new state of the puzzle.
+            time.sleep(1) # function adds a delay of one second between each state to slow down the animation.
+    else: # If no solution was found
+        print("No solution found.") # the code prints "No solution found."
 
-    # Wait for the window to be closed
-    while True:  # Finally, this while loop waits for the user to close the Pygame window by clicking the close button. When the close button is clicked, the loop exits and the pygame.quit() function is called to exit the Pygame window.
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+    while True:  # This while loop waits for the user to close the Pygame window by clicking the close button.
+        for event in pygame.event.get(): 
+            if event.type == pygame.QUIT: # When the close button is clicked
+                pygame.quit() # the loop exits and the pygame.quit() function is called to exit the Pygame window.
                 return
 
 
 if __name__ == '__main__':
+    '''
+    The if __name__ == '__main__': line ensures that the main() function is only called when the script is run as the main program, and not when it is imported into another script.
+    '''
     main()
-'''
-The if __name__ == '__main__': line ensures that the main() function is only called when the script is run as the main program, and not when it is imported into another script.
-'''
