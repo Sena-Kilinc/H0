@@ -1,4 +1,3 @@
-import time
 from queue import PriorityQueue
 
 GOAL_STATE = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
@@ -74,7 +73,6 @@ def main():
         for state in path:
             print_board(state)
             print()
-            time.sleep(1)
     else:
         print("No solution found.")
 
