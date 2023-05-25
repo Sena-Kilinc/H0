@@ -67,7 +67,10 @@ class Solution:
                     # (i//3)*3 rounds down the row index i to the nearest multiple of 3,
                     # and adds j//3 to calculate the column offset within that row
         # solves the Sudoku puzzle using backtracking algorithm recursively. If the algorithm finds a solution, it returns True, otherwise it returns False. This line essentially starts the solving process by calling the backtrack() function with default values for the i and j parameters, which are both set to 0 initially.
-        self.backtrack()
+        if self.backtrack():
+            print("Solution found!")
+        else:
+            print("No solution found.")
         
     def backtrack(self,i=0, j=0): 
         '''
