@@ -88,9 +88,9 @@ def actions(state):
     for row, col in ((0, 1), (1, 0), (0, -1), (-1, 0)): # To iterate over pairs that represent directions which empty cell can move: right,up,left,down.
         if 0 <= i + row < 3 and 0 <= j + col < 3: # checks for the empty tile's actions without going out of bounds.
             newState=[] # to create new state which copies each row.
-            for row in state:
+            for rowX in state:
                 newRow=[]  # to create row list.
-                for element in row:
+                for element in rowX:
                     newRow.append(element) # insert each element to the row list.
                 newState.append(newRow) # insert row list to the state list.
             # This is a swap line for moving the empty cell in the given direction.
