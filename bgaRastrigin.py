@@ -21,8 +21,8 @@ class Chromosome:
         '''
         The constructor initializes the binary string, decision variable values, real-coded variable values, and fitness. 
         It has no time or space complexity.
-        The time complexity of this class is Constant time complexity (O(1)) as it initializes the attributes with their default values. 
-        The space complexity of this class is Constant space complexity (O(1)).
+        Time complexity: O(1) - Constant. 
+        Space complexity: O(1) - Constant. 
         '''
         self.binaryString = binaryString if binaryString is not None else ''  # Binary string representation
         self.dv1 = dv1 if dv1 is not None else 0 # Decoded value of gene 1
@@ -36,16 +36,16 @@ def compareChroms(obj1, obj2):
     '''
     This function takes in two chromosomes and returns True if the fitness of the first chromosome is less than the second chromosome. 
     It is used for sorting the population.
-    The time complexity of this function is Constant time complexity (O(1)) as it compares the fitness values of two chromosomes. 
-    The space complexity of this function is  Constant space complexity (O(1)).
+    Time complexity: O(1) - Constant. 
+    Space complexity: O(1) - Constant. 
     '''
     return obj1.fitness < obj2.fitness # Comparison function for sorting chromosomes based on fitness
 
 def decodeValue(str, start, end):
     '''
     This function takes in a binary string, start index, and end index and returns the decimal value of the substring of the binary string from start index to end index. 
-    The time complexity of this function is Linear time complexity (O(end - start + 1)) where n is the length of the substring.
-    The space complexity is  Constant space complexity (O(1)).
+    Time complexity: O(end - start + 1) - Linear. 
+    Space complexity: O(1) - Constant. 
     '''
     ans = 0 # Initialize the variable to hold the decoded decimal value
     exp = 0 # Initialize the exponent value for computing the decimal value
@@ -58,8 +58,8 @@ def decodeValue(str, start, end):
 def scalingFunction(dv, length):
     '''
     This function takes in a decimal value (dv) and length and returns a real-coded value based on the upper and lower bounds. 
-    The time complexity of this function is Constant time complexity (O(1)) and 
-    the space complexity is Constant space complexity (O(1)).
+    Time complexity: O(1) - Constant. 
+    Space complexity: O(1) - Constant.
     '''
     p = (UB - LB) / (math.pow(2, length) - 1.0)  # Calculate the scaling factor based on the upper bound, lower bound, and gene length
     return LB + p * dv # Scale the decoded value using the scaling factor and add the lower bound to obtain the scaled value within the specified range
@@ -67,9 +67,9 @@ def scalingFunction(dv, length):
 
 def initializeRandomIndividual():
     '''
-     This function initializes a single random chromosome as a binary string.
-     The time complexity of this function is Linear time complexity (O(GENE1 + GENE2)). where GENE1 and GENE2 are the lengths of binary substrings for decision variables 1 and 2 respectively. 
-     The space complexity is Constant space complexity (O(1)). Because it creates and returns only one chromosome object at a time, regardless of the value of GENE1 and GENE2. 
+    This function initializes a single random chromosome as a binary string.
+    Time complexity: O(GENE1 + GENE2) - Linear. 
+    Space complexity: O(1) - Constant. 
     '''
     binaryString = '' # Initialize an empty binary string
     for i in range(GENE1 + GENE2): # sum lengths of binary substrings
@@ -82,10 +82,10 @@ def initializeRandomIndividual():
 
 def initializeRandomPop(pop):
     '''
-     This function initializes the entire population of individuals. 
-     It takes in a list of chromosomes and initializes each chromosome in the list by calling the initializeRandomIndividual function. 
-     The time complexity of this function is Linear time complexity (O(N * (GENE1 + GENE2))). so O(N) where N is the size of the population. 
-     The space complexity is also Linear space complexity (O(N)).
+    This function initializes the entire population of individuals. 
+    It takes in a list of chromosomes and initializes each chromosome in the list by calling the initializeRandomIndividual function. 
+    Time complexity: O(N * (GENE1 + GENE2)) - Linear. 
+    Space complexity: O(N) - Linear. 
     '''
     for i in range(N):
         pop.append(initializeRandomIndividual()) # Add a random individual to the population
@@ -94,8 +94,8 @@ def evaluate(chrom):
     '''
     This function evaluates a single chromosome. It decodes the values of decision variables and calculates the fitness based on the Rastrigin function. 
     If an individual violates the upper or lower bounds, a penalty is applied. 
-    The time complexity of this function is  Constant time complexity (O(1)) and 
-    the space complexity is Constant space complexity (O(1)).
+    Time complexity: O(1) - Constant. 
+    Space complexity: O(1) - Constant.
     '''
     chrom.dv1 = decodeValue(chrom.binaryString, 0, GENE1-1)  # Decode gene 1's binary string to decimal value
     chrom.dv2 = decodeValue(chrom.binaryString, GENE1, GENE1+GENE2-1) # Decode gene 2's binary string to decimal value
@@ -115,8 +115,8 @@ def selection(pop):
     '''
     This function performs binary tournament selection.
     It takes in the population as a list of chromosomes and returns the mating pool as a list of chromosomes.
-    The time complexity of this function is  Linear time complexity (O(N)). where N is the size of the population. 
-    The space complexity is Linear space complexity (O(N)).
+    Time complexity: O(N) - Linear. 
+    Space complexity: O(N) - Linear.
     '''
     matingPool = [] # Initialize an empty mating pool
     for i in range(N):  # Iterate over the range of population
@@ -135,8 +135,8 @@ def selection(pop):
 def crossover(matingPool):
     '''
     This function performs crossover between pairs of parents in the mating pool to generate new offspring. 
-    The time complexity of this function is  Linear time complexity (O(N)). where N is the size of the mating pool. 
-    The space complexity is  Linear space complexity (O(N))
+    Time complexity: O(N) - Linear. 
+    Space complexity: O(N) - Linear.
     '''
     offspring = []  # Initialize an empty offspring list
     for i in range(0, N-1, 2): # Iterate over the mating pool by pairs
@@ -168,8 +168,8 @@ def crossover(matingPool):
 def mutation(offspring):
     '''
     This function applies mutation to the offspring generated through crossover. 
-    The time complexity of this function is Linear time complexity (O(N * (GENE1 + GENE2))), where N is the size of the population and GENE1+GENE2 is the length of each chromosome. 
-    The space complexity is Constant space complexity (O(1)) since the function mutates the chromosomes in-place without creating any new data structures.
+    Time complexity: O(N * (GENE1 + GENE2)) - Linear. 
+    Space complexity: O(1) - Constant.
     '''
     for i in range(N): # Iterate over the offspring
         for j in range(GENE1 + GENE2): # Iterate over the genes in the chromosome
@@ -185,8 +185,8 @@ def mutation(offspring):
 def get_fitness(chrom):
     '''
     Returns the fitness value of the chromosome
-    The time complexity is O(1).
-    The space complexity is O(1).
+    Time complexity: O(1) - Constant. 
+    Space complexity: O(1) - Constant.
     '''
     return chrom.fitness
 
@@ -197,8 +197,8 @@ def runBGA():
     performs selection, crossover, and mutation on the offspring, evaluates the fitness 
     of the new offspring, combines the parent and offspring populations, and removes
     the weakest individuals. It returns the best individual of the final population. 
-    The time complexity is Quadratic time complexity (O(T * N * (GENE1 + GENE2))) where T is the number of generations, N is the population size, and GENE1 and GENE2 are the lengths of the binary strings representing the two genes.
-    The space complexity is Linear space complexity (O(N)).
+    Time complexity: O(T * N * (GENE1 + GENE2)) - Quadratic. 
+    Space complexity: (O(N)) - Linear.
     '''
     # Initialize population
     pop = []
