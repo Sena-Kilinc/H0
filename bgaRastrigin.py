@@ -1,3 +1,9 @@
+'''
+This project solves minimize the Rastrigin Function problem with Binary Coded Genetic Algorithm.
+Rastrigin function's minimize solution is 0 at [0,0]. 
+@ Sena Kılınç 20191701033
+'''
+
 import random
 import math
 
@@ -249,4 +255,4 @@ def runBGA():
 
 
 if __name__ == '__main__':
-    runBGA()  # Rastrigin function's optimal solution is 0 at [0,0].
+    runBGA()  # Rastrigin function's minimize solution is 0 at [0,0].
