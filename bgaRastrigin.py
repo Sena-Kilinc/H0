@@ -1,13 +1,13 @@
 '''
-This project solves minimize the Rastrigin Function problem with Binary Coded Genetic Algorithm.
-Rastrigin function's minimize solution is 0 at [0,0]. 
+This project solves optimization problem for minimize the Rastrigin Function with Binary Coded Genetic Algorithm.
+Rastrigin function's minimizing solution is 0 at [0,0]. 
 @ Sena Kılınç 20191701033
 '''
 
 import random
 import math
 
-# Constants-Parameters of the BGA
+# Constants parameters of the BGA
 GENE1 = 10    # length of binary substring for decision variable 1
 GENE2 = 10    # length of binary substring for decision variable 2
 N = 500       # size of population 
@@ -36,16 +36,6 @@ class Chromosome:
         self.x1 = x1 if x1 is not None else 0 # Scaled value of gene 1
         self.x2 = x2 if x2 is not None else 0 # Scaled value of gene 2
         self.fitness = fitness if fitness is not None else 0 # Fitness value
-
-
-def compareChroms(obj1, obj2):
-    '''
-    This function takes in two chromosomes and returns True if the fitness of the first chromosome is less than the second chromosome. 
-    It is used for sorting the population.
-    Time complexity: O(1) - Constant. 
-    Space complexity: O(1) - Constant. 
-    '''
-    return obj1.fitness < obj2.fitness # Comparison function for sorting chromosomes based on fitness
 
 def decodeValue(str, start, end):
     '''
@@ -188,7 +178,7 @@ def mutation(offspring):
                 # Evaluate the fitness of the new offspring
                 evaluate(offspring[i]) # Recalculate the fitness of the mutated chromosome
 
-def get_fitness(chrom):
+def getFitness(chrom):
     '''
     Returns the fitness value of the chromosome
     Time complexity: O(1) - Constant. 
@@ -206,16 +196,13 @@ def runBGA():
     Time complexity: O(T * N * (GENE1 + GENE2)) - Quadratic. 
     Space complexity: (O(N)) - Linear.
     '''
-    # Initialize population
-    pop = []
+    pop = [] # Initialize population
     initializeRandomPop(pop)
 
-    # Evaluate the fitness of the initial population
-    for i in range(N):
+    for i in range(N): # Evaluate the fitness of the initial population
         evaluate(pop[i])
 
-    # Sort the population by fitness
-    pop.sort(key=get_fitness)
+    pop.sort(key=getFitness) # Sort the population by fitness
 
     # Print the best individual of the initial population
     print(
@@ -223,36 +210,19 @@ def runBGA():
 
     # Repeat for T generations
     for t in range(1, T+1):
-        # Select individuals from the current population
-        matingPool = selection(pop)
-
-        # Generate new offspring using crossover
-        offspring = crossover(matingPool)
-
-        # Mutate the new offspring
-        mutation(offspring)
-
-        # Evaluate the fitness of the new offspring
-        for i in range(len(offspring)):
+        matingPool = selection(pop) # Select individuals from the current population
+        offspring = crossover(matingPool) # Generate new offspring using crossover
+        mutation(offspring) # Mutate the new offspring
+        for i in range(len(offspring)): # Evaluate the fitness of the new offspring
             evaluate(offspring[i])
-
-        # Combine the parent and offspring populations
-        pop += offspring
-
-        # Sort the combined population by fitness
-        pop.sort(key=get_fitness)
-
-
-        # Remove the weakest individuals
-        pop = pop[:N]
-
+        pop += offspring # Combine the parent and offspring populations
+        pop.sort(key=getFitness) # Sort the combined population by fitness
+        pop = pop[:N] # Remove the weakest individuals
         # Print the best individual of the current population
         print(
             f"Generation {t}: Best fitness = {pop[0].fitness}, Best solution = ({pop[0].x1}, {pop[0].x2})")
-
-    # Return the best individual of the final population
-    return pop[0]
+    return pop[0] # Return the best individual of the final population
 
 
 if __name__ == '__main__':
-    runBGA()  # Rastrigin function's minimize solution is 0 at [0,0].
+    runBGA()  # Rastrigin function's minimize solution's answer is 0 at [0,0].
