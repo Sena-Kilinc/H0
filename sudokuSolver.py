@@ -21,18 +21,18 @@ class Solution:
         steps = [0] # Initialize a list with a single element, 0, for steps
 
         for i in range(9): # Populate the rows, cols, and boxes lists
-            row_set = set() # Create an empty set for each row
-            col_set = set() # Create an empty set for each column
-            box_set = set() # Create an empty set for each box
+            rowSet = set() # Create an empty set for each row
+            colSet = set() # Create an empty set for each column
+            boxSet = set() # Create an empty set for each box
             
             for j in range(1, 10):# Populate each set with numbers 1 to 9 as strings
-                row_set.add(str(j)) # Add the number to the row set
-                col_set.add(str(j)) # Add the number to the column set
-                box_set.add(str(j)) # Add the number to the box set
+                rowSet.add(str(j)) # Add the number to the row set
+                colSet.add(str(j)) # Add the number to the column set
+                boxSet.add(str(j)) # Add the number to the box set
             # Append the populated sets to the respective lists
-            rows.append(row_set) # Append the row set to the rows list
-            cols.append(col_set) # Append the column set to the cols list
-            boxes.append(box_set) # Append the box set to the boxes list
+            rows.append(rowSet) # Append the row set to the rows list
+            cols.append(colSet) # Append the column set to the cols list
+            boxes.append(boxSet) # Append the box set to the boxes list
         # These two for loops iterate over each cell in the 9x9 Sudoku board.
         for i in range(9):
             for j in range(9):
@@ -113,6 +113,6 @@ board = [["5", "3", ".", ".", "7", ".", ".", ".", "."],
          [".", ".", ".", "4", "1", "9", ".", ".", "5"],
          [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
 
-# This creates an instance of the Solution class with the given board and solves the Sudoku puzzle.
+# This lines create an instance of the Solution class with the given board and solves the Sudoku puzzle.
 solution= Solution()
-solution.solveSudoku(board) # to 
+solution.solveSudoku(board)
