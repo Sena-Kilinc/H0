@@ -97,15 +97,8 @@ def evaluate(chrom):
     chrom.dv2 = decodeValue(chrom.binaryString, GENE1, GENE1+GENE2-1) # Decode gene 2's binary string to decimal value
     chrom.x1 = scalingFunction(chrom.dv1, GENE1) # Scale gene 1's decoded value
     chrom.x2 = scalingFunction(chrom.dv2, GENE2) # Scale gene 2's decoded value
-
-    if chrom.x1 < LB or chrom.x1 > UB or chrom.x2 < LB or chrom.x2 > UB: # If an individual violates the upper or lower bounds of the problem
-        # Apply a linear penalty which is equal to the sum of the differences between the individual's position and the nearest bound for each dimension. 
-        penalty = max(0, abs(chrom.x1 - LB)) + max(0, abs(chrom.x1 - UB)) + max(0, abs(chrom.x2 - LB)) + max(0, abs(chrom.x2 - UB))
-        chrom.fitness += penalty # The penalty reduces the fitness of the individual, making it less likely to be selected for reproduction, but it does not completely disqualify the individual.
-
-    else:
-        # Calculate the fitness from the objective function f(x) = A * n + Σ(xi^2 - A * cos(2 * π * xi))
-        chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # Rastrigin function
+    # Calculate the fitness from the objective function f(x) = A * n + Σ(xi^2 - A * cos(2 * π * xi))
+    chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # Rastrigin function
 
 def selection(pop):
     '''
@@ -130,17 +123,15 @@ def selection(pop):
 
 def crossover(matingPool):
     '''
-    This function performs crossover between pairs of parents in the mating pool to generate new offspring. 
+    This function performs single point crossover between pairs of parents in the mating pool to generate new offspring. 
     Time complexity: O(N) - Linear. 
     Space complexity: O(N) - Linear.
     '''
     offspring = []  # Initialize an empty offspring list
-    for i in range(0, N-1, 2): # Iterate over the mating pool by pairs
+    for i in range(len(matingPool) // 2): # Iterate over the mating pool 
+        parent1 = random.choice(matingPool) # Choosing random parents
+        parent2 = random.choice(matingPool)
         if random.uniform(0, 1) <= PC: # Randomly decide whether to apply crossover
-            # Select the two parents
-            parent1 = matingPool[i]
-            parent2 = matingPool[i+1]
-
             # Select a random crossover point
             crossPoint = random.randint(1, GENE1+GENE2-1)
 
@@ -156,8 +147,8 @@ def crossover(matingPool):
             offspring.append(offspring2)
         else:
             # If crossover probability is not met, add the parents to the offspring list
-            offspring.append(matingPool[i])
-            offspring.append(matingPool[i+1])
+            offspring.append(parent1)
+            offspring.append(parent2)
 
     return offspring # Return the list of offspring chromosomes
 
@@ -218,7 +209,7 @@ def runBGA():
             evaluate(offspring[i])
         pop += offspring # Combine the parent and offspring populations
         pop.sort(key=getFitness) # Sort the combined population by fitness
-        pop = pop[:N] # Remove the weakest individuals
+        pop = pop[:N] # Remove the weakest individuals elitist method
         # Print the best individual of the current population
         print(
             f"Generation {t}: Best fitness = {pop[0].fitness}, Best solution = ({pop[0].x1}, {pop[0].x2})")
