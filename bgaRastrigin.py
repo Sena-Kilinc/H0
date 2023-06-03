@@ -101,10 +101,10 @@ def evaluate(chrom):
     if chrom.x1 < LB or chrom.x1 > UB or chrom.x2 < LB or chrom.x2 > UB: # If an individual violates the upper or lower bounds of the problem
         # Apply a linear penalty which is equal to the sum of the differences between the individual's position and the nearest bound for each dimension. 
         penalty = max(0, abs(chrom.x1 - LB)) + max(0, abs(chrom.x1 - UB)) + max(0, abs(chrom.x2 - LB)) + max(0, abs(chrom.x2 - UB))
-        chrom.fitness -= penalty # The penalty reduces the fitness of the individual, making it less likely to be selected for reproduction, but it does not completely disqualify the individual.
+        chrom.fitness += penalty # The penalty reduces the fitness of the individual, making it less likely to be selected for reproduction, but it does not completely disqualify the individual.
 
     else:
-        # Calculate the fitness from the objective function
+        # Calculate the fitness from the objective function f(x) = A * n + Σ(xi^2 - A * cos(2 * π * xi))
         chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # Rastrigin function
 
 def selection(pop):
@@ -121,7 +121,7 @@ def selection(pop):
         index2 = random.randint(0, N-1) # Generate another random index between 0 and N-1
 
         # Select the one with highest fitness
-        if pop[index1].fitness > pop[index2].fitness:
+        if pop[index1].fitness < pop[index2].fitness:
             matingPool.append(pop[index1]) # Add the individual to the mating pool
         else:
             matingPool.append(pop[index2]) # Add the individual to the mating pool
@@ -136,7 +136,7 @@ def crossover(matingPool):
     '''
     offspring = []  # Initialize an empty offspring list
     for i in range(0, N-1, 2): # Iterate over the mating pool by pairs
-        if random.uniform(0, 1) < PC: # Randomly decide whether to apply crossover
+        if random.uniform(0, 1) <= PC: # Randomly decide whether to apply crossover
             # Select the two parents
             parent1 = matingPool[i]
             parent2 = matingPool[i+1]
@@ -170,11 +170,12 @@ def mutation(offspring):
     for i in range(N): # Iterate over the offspring
         for j in range(GENE1 + GENE2): # Iterate over the genes in the chromosome
             # Randomly decide whether to apply mutation
-            if random.uniform(0, 1) < PM:
-                if offspring[i].binaryString[j] == '1': # If the gene is '1', Flip the gene to '0'
-                    offspring[i].binaryString = offspring[i].binaryString[:j] + '0' + offspring[i].binaryString[j+1:]
+            if random.uniform(0, 1) <= PM:
+                site = random.randint(0, GENE1 + GENE2 - 1)
+                if offspring[i].binaryString[site] == '1': # If the gene is '1', Flip the gene to '0'
+                    offspring[i].binaryString = offspring[i].binaryString[:site] + '0' + offspring[i].binaryString[site+1:]
                 else: # If the gene is '0', Flip the gene to '1'
-                    offspring[i].binaryString = offspring[i].binaryString[:j] + '1' + offspring[i].binaryString[j+1:]
+                    offspring[i].binaryString = offspring[i].binaryString[:site] + '1' + offspring[i].binaryString[site+1:]
                 # Evaluate the fitness of the new offspring
                 evaluate(offspring[i]) # Recalculate the fitness of the mutated chromosome
 
@@ -202,7 +203,7 @@ def runBGA():
     for i in range(N): # Evaluate the fitness of the initial population
         evaluate(pop[i])
 
-    pop.sort(key=getFitness) # Sort the population by fitness
+    pop.sort(key=getFitness) # Sort the population by fitness ascending order
 
     # Print the best individual of the initial population
     print(
@@ -225,4 +226,7 @@ def runBGA():
 
 
 if __name__ == '__main__':
+    '''
+    The if __name__ == '__main__': line ensures that the runBGA() function is only called when the script is run as the main program, and not when it is imported into another script.
+    '''
     runBGA()  # Rastrigin function's minimize solution's answer is 0 at [0,0].
