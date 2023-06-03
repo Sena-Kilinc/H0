@@ -47,11 +47,12 @@ class Solution:
         print("Initial puzzle:")
         self.printBoard(board) # Print the initial puzzle board
         print()
-
-        self.backtrack(board, rows, cols, boxes, steps) # Start the Sudoku-solving recursion
-
-        print("Solution of Sudoku:") # Print the solution board
-        self.printBoard(board)
+        # Start the Sudoku-solving recursion
+        if self.backtrack(board, rows, cols, boxes, steps): # If solution is found
+            print("Solution of Sudoku:") 
+            self.printBoard(board)
+        else: # If no solution is found
+            print("No solution found.")
 
     def backtrack(self, board, rows, cols, boxes, steps, i=0, j=0):
         '''
@@ -102,17 +103,29 @@ class Solution:
             print(row)
         print()
 
-# Initialize Sudoku board with a given puzzle.
-board = [["5", "3", ".", ".", "7", ".", ".", ".", "."],
-         ["6", ".", ".", "1", "9", "5", ".", ".", "."],
-         [".", "9", "8", ".", ".", ".", ".", "6", "."],
-         ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
-         ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
-         ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
-         [".", "6", ".", ".", ".", ".", "2", "8", "."],
-         [".", ".", ".", "4", "1", "9", ".", ".", "5"],
-         [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
+def main():
+  '''
+  This function creates the initial puzzle and then solves it with solveSudoku function.
+  Time Complexity: O(9^(n^2)) Exponential.
+  Space Complexity: O(n^2) Quadratic.
+  '''
+  # Initialize Sudoku board with a given puzzle.
+  board = [["5", "3", ".", ".", "7", ".", ".", ".", "."],
+          ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+          [".", "9", "8", ".", ".", ".", ".", "6", "."],
+          ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+          ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+          ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+          [".", "6", ".", ".", ".", ".", "2", "8", "."],
+          [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+          [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
 
-# This lines create an instance of the Solution class with the given board and solves the Sudoku puzzle.
-solution= Solution()
-solution.solveSudoku(board)
+  # This lines create an instance of the Solution class with the given board and solves the Sudoku puzzle.
+  solution= Solution()
+  solution.solveSudoku(board)
+
+if __name__ == '__main__':
+    '''
+    The if __name__ == '__main__': line ensures that the main() function is only called when the script is run as the main program, and not when it is imported into another script.
+    '''
+    main() # Call the main function to start the program
