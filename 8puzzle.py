@@ -25,8 +25,8 @@ class Node:
         The g parameter represents the cost to reach the current state, 
         and the parent parameter is a reference to the parent node in the search tree. 
         If this node is the root node, then the parent parameter should be set to None.
-        Time complexity: O(1). 
-        Space complexity: O(1). 
+        Time complexity: O(1) Constant. 
+        Space complexity: O(1) Constant. 
         '''
         self.state = state # Current state
         self.g = g # Cost to reach current state
@@ -37,8 +37,8 @@ class Node:
         '''
         The f method returns the sum of g and h, where h is the estimated cost to reach the goal state using the heuristic function. 
         This is the cost function used by the search algorithm to determine which nodes to explore first.
-        Time complexity: O(1). 
-        Space complexity: O(1). 
+        Time complexity: O(1) Constant. 
+        Space complexity: O(1) Constant. 
         '''
         return self.g + self.h
 
@@ -47,8 +47,8 @@ class Node:
         The lt method is used to define the comparison operator for Node objects. With this objects can use the < operator.
         It returns True if the f value of this node is less than the f value of the other node. 
         This is used to maintain a priority queue of nodes to explore, where nodes with lower f values are explored first. 
-        Time complexity: O(1). 
-        Space complexity: O(1). 
+        Time complexity: O(1) Constant. 
+        Space complexity: O(1) Constant. 
         '''
         return self.f() < other.f()
 
@@ -56,8 +56,8 @@ def heuristicManhattan(state):
     '''
     This function computes the Manhattan distance heuristicManhattan for the given state.
     It takes a 2D list representing the puzzle state as input and returns an integer representing the heuristic cost.
-    Time complexity: O(n^2), where n is the size of the puzzle (n=3).
-    Space complexity: O(1), since the function uses a constant amount of memory.
+    Time complexity: O(n^2) Quadratic, where n is the size of the puzzle (n=3).
+    Space complexity: O(1) Constant, since the function uses a constant amount of memory.
     '''
     distance = 0 # This variable will be used to keep track of the Manhattan distance heuristic of the given puzzle state.
     # These nested loops iterate over each element of the 2D list state, from state[0][0] to state[2][2]
@@ -74,8 +74,8 @@ def actions(state):
     '''
     This function generates all possible actions that can be made from a given state in the 8-Puzzle Problem.
     It takes a 2D list representing the puzzle state as input and returns a list of all possible successor states.
-    Time complexity: O(n^2).
-    Space complexity: O(n^2).
+    Time complexity: O(n^2) Quadratic.
+    Space complexity: O(n^2) Quadratic.
     '''
     i = None # row
     j = None # column
@@ -145,8 +145,8 @@ def solvePuzzle(startState):
 def printBoard(state):
     '''
     This functions is for printing the puzzle board state.
-    Time complexity: O(n^2).
-    Space complexity: O(1).
+    Time complexity: O(n^2) Quadratic.
+    Space complexity: O(1) Constant.
     '''
     # These nested loops iterate over each element of the 2D list state
     for i in range(3):
