@@ -3,9 +3,11 @@ This project presents a solution to the Sudoku Solver problem.
 The program is designed to fill empty cells in complex Sudoku puzzles.
 By strictly adhering to the fundamental rules of Sudoku, the project ensures that 
 Each digit from 1 to 9 is precisely and uniquely placed in every row, column, and 3x3 sub-box of the grid.
+The program uses backtracking, forward check and arc consistency.
 @ Sena Kılınç 20191701033
 '''
 from typing import List
+from collections import deque
 
 class Solution:
     def solveSudoku(self, board: List[List[str]]) -> None:
@@ -58,7 +60,7 @@ class Solution:
         '''
         This function implements the backtracking algorithm to solve the Sudoku puzzle recursively. 
         It takes two optional parameters i and j that represent the current row and column being filled in the board. It updates the self.board and self.steps instance variables for every step.
-        Time Complexity: O(9^(n^2)) Exponential. The number of possible combinations for each cell is 9, and there are a total of n^2 cells on the Sudoku board. 
+        Time Complexity: O(9^(n)) Exponential. The number of possible combinations for each cell is 9, and there are a total of n cells on the Sudoku board. 
         Space Complexity: O(n^2) Quadratic.
         '''
         steps[0] += 1 # Increase to keep track of the number of steps taken to solve the puzzle
@@ -74,17 +76,16 @@ class Solution:
         
         # This loop iterates over the intersection of self.rows[i], self.cols[j], and self.boxes[(i//3)*3+j//3], which contains all the possible numbers that can be placed in the cell (i,j).
         for num in rows[i] & cols[j] & boxes[(i//3)*3+j//3]:
-            board[i][j] = str(num) # It then places each number in the cell
-            rows[i].remove(str(num)) # Removes it from the corresponding row
-            cols[j].remove(str(num)) # Removes it from the corresponding column
-            boxes[(i//3)*3+j//3].remove(str(num)) # Removes it from the corresponding box
+            self.forwardChecking(i, j, num, rows, cols, boxes) # Apply forward checking by removing the number from sets
+            board[i][j] = str(num)  # Assign the number to the current cell
 
             print("Step", steps[0])
             self.printBoard(board) # print on the board
 
-            # This calls backtrack recursively on the next cell and returns True if a solution is found
-            if self.backtrack(board, rows, cols, boxes, steps, nextRow, nextColumn):
-                return True
+            if self.arcConsistency(board, rows, cols, boxes):# Apply arc consistency by updating sets
+              if self.backtrack(board, rows, cols, boxes, steps, nextRow, nextColumn): # This calls backtrack recursively on the next cell and returns True if a solution is found
+                  return True
+
             # If no solution is found, this code adds the previously removed number back to the row, column, and box, and clears the cell (i,j) for the next iteration.
             rows[i].add(str(num)) # Adding back to row
             cols[j].add(str(num)) # Adding back to column
@@ -92,6 +93,91 @@ class Solution:
             board[i][j] = '.' # clears the cell 
          # Returns False if no solution is found.
         return False
+    
+    def forwardChecking(self, i, j, num, rows, cols, boxes):
+        """
+        This function performs forward checking after assigning a number num to a cell at position (i, j) in the Sudoku board.
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
+        # Remove the selected number from the sets of corresponding row, column, and box
+        rows[i].discard(str(num))
+        cols[j].discard(str(num))
+        boxes[(i // 3) * 3 + j // 3].discard(str(num))
+
+    def arcConsistency(self, board, rows, cols, boxes):
+        """
+        This function implements the arc consistency algorithm.
+        It ensures that all variables (empty cells) in the Sudoku board satisfy the constraints of the game.
+        Time Complexity: O(n^2)
+        Space Complexity: O(n^2)
+        """
+        # Perform arc consistency propagation
+        queue = deque()
+
+        # Add all the empty variables (represented as (i, j) tuples) to the queue
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == ".":
+                    queue.append((i, j))
+
+        visited = set()  # Keep track of visited variables
+
+        while queue:
+            i, j = queue.popleft()  # Get the next variable from the queue
+            visited.add((i, j))  # Mark variable as visited
+
+            num = board[i][j]  # Current number assigned to the variable (i, j)
+
+            # Propagate constraints to affected variables in the same row
+            for column in range(9):
+                if column != j and board[i][column] == ".":
+                    # Remove the current number from the domain of the affected variable
+                    if not self.removeFromDomain(i, column, rows, num): # bactrack
+                        return False
+                    if (i, column) not in visited:# Avoid processing visited variables
+                        queue.append((i, column))
+                        visited.add((i, column))# Mark variable as visited
+
+            # Propagate constraints to affected variables in the same column
+            for row in range(9):
+                if row != i and board[row][j] == ".":
+                    # Remove the current number from the domain of the affected variable  
+                    if not self.removeFromDomain(row, j, cols, num):# bactrack
+                        return False
+                    if (row, j) not in visited:# Avoid processing visited variables
+                        queue.append((row, j))
+                        visited.add((row, j))# Mark variable as visited
+
+            # Propagate constraints to affected variables in the same box
+            boxRow = (i // 3) * 3  # Starting row index of the current box
+            boxCol = (j // 3) * 3  # Starting column index of the current box
+
+            # Iterate over the rows within the same box
+            for row in range(boxRow, boxRow + 3):
+                # Iterate over the columns within the same box
+                for column in range(boxCol, boxCol + 3):
+                    if (row != i or column != j) and board[row][column] == ".":
+                        # Remove the current number from the domain of the affected variable
+                        if not self.removeFromDomain(row, column, boxes, num): # bactrack
+                            return False
+                        if (row, column) not in visited: # Avoid processing visited variables
+                            queue.append((row, column))
+                            visited.add((row, column))# Mark variable as visited
+        return True # if constraint propagation is valid
+
+    def removeFromDomain(self, i, j, domain, num):
+        """
+        This function removes a number num from the domain of a variable at position (i, j) in the Sudoku board
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
+        # Remove the selected number from the domain of the variable at position (i, j)
+        if num in domain[i]:
+            domain[i].remove(num) # Remove the number from the domain of the specified cell
+            if len(domain[i]) == 0:
+                return False # If the domain becomes empty, return False to indicate a conflict
+        return True # Return True to indicate successful removal or non-empty domain
     
     def printBoard(self, board: List[List[str]]) -> None:
         '''
