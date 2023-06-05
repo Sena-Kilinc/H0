@@ -1,5 +1,6 @@
 '''
 This project solves optimization problem for minimize the Rastrigin Function with Binary Coded Genetic Algorithm.
+For selection the program tournement selection, for crossover single point crossover, and for mutation local mutation is used.
 Rastrigin function's minimizing solution is 0 at [0,0]. 
 @ Sena Kılınç 20191701033
 '''
@@ -14,8 +15,8 @@ N = 500       # size of population
 T = 200       # max number of generations
 UB = 5.12     # Rastrigin function upper bound
 LB = -5.12    # Rastrigin function lower bound
-PC = 0.9      # probability of crossover
-PM = 0.2      # probability of mutation
+PC = 0.7      # probability of crossover
+PM = 0.1      # probability of mutation
 
 
 class Chromosome:
@@ -37,16 +38,16 @@ class Chromosome:
         self.x2 = x2 if x2 is not None else 0 # Scaled value of gene 2
         self.fitness = fitness if fitness is not None else 0 # Fitness value
 
-def decodeValue(str, start, end):
+def decodeValue(binaryString, start, end):
     '''
     This function takes in a binary string, start index, and end index and returns the decimal value of the substring of the binary string from start index to end index. 
-    Time complexity: O(end - start + 1) - Linear. 
+    Time complexity: O(n) - Linear. 
     Space complexity: O(1) - Constant. 
     '''
     ans = 0 # Initialize the variable to hold the decoded decimal value
     exp = 0 # Initialize the exponent value for computing the decimal value
     for i in range(end, start - 1, -1):  # Iterate over the range of indices in reverse order
-        if str[i] == '1': # If the bit at the current index is '1'
+        if binaryString[i] == '1': # If the bit at the current index is '1'
             ans += int(math.pow(2, exp))  # Add the corresponding decimal value to ans using exponentiation
         exp += 1  # Increment the exponent value for the next iteration
     return ans  # Return the decoded decimal value
@@ -97,7 +98,7 @@ def evaluate(chrom):
     chrom.dv2 = decodeValue(chrom.binaryString, GENE1, GENE1+GENE2-1) # Decode gene 2's binary string to decimal value
     chrom.x1 = scalingFunction(chrom.dv1, GENE1) # Scale gene 1's decoded value
     chrom.x2 = scalingFunction(chrom.dv2, GENE2) # Scale gene 2's decoded value
-    # Calculate the fitness from the objective function f(x) = A * n + Σ(xi^2 - A * cos(2 * π * xi))
+    # Calculate the fitness from the objective function f(x) = A * n + Σ(xi^2 - A * cos(2 * π * xi)), A=10, n=2
     chrom.fitness = 10 * 2 + (chrom.x1 ** 2 - 10 * math.cos(2 * math.pi * chrom.x1)) + (chrom.x2 ** 2 - 10 * math.cos(2 * math.pi * chrom.x2))  # Rastrigin function
 
 def selection(pop):
@@ -194,7 +195,7 @@ def runBGA():
     for i in range(N): # Evaluate the fitness of the initial population
         evaluate(pop[i])
 
-    pop.sort(key=getFitness) # Sort the population by fitness ascending order
+    #pop.sort(key=getFitness) # Sort the population by fitness ascending order
 
     # Print the best individual of the initial population
     print(
