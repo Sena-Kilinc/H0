@@ -103,7 +103,7 @@ def aStarSearch(start):
     '''
     This function implements the A* search algorithm.
     It takes a start node as input and returns the path from the start state to the goal state if a solution is found, otherwise returns None.
-    The function uses a priority queue to keep track of the frontier and a set to keep track of the visited nodes.
+    The function uses a priority queue to keep track of the fringe and a set to keep track of the visited nodes.
     Time complexity: O(b^d). In the worst case, where b is the branching factor and d is the depth of the solution, the algorithm explores all possible states in the search space.
     Space complexity: O(b^d). The algorithm keeps track of all visited states, and the priority queue can store up to b^d nodes in the worst case.
     '''
@@ -114,18 +114,18 @@ def aStarSearch(start):
     while not queue.empty():
         f, node = queue.get() # The node with the lowest f-score is removed from the queue and assigned to the node variable.
         if node.state == GOAL_STATE:  # If the current node is the goal state, a solution has been found.
-            path = [] #
+            path = [] 
             while node.parent: # The function constructs a path from the start state to the goal state by tracing back through the parent nodes of each node in the path. 
                 path.append(node.state) 
                 node = node.parent
-            path.append(start.state)
+            path.append(start.state) 
             return path[::-1] # The path is returned in reverse order, starting from the start state.
         # If the current node is not the goal state, the function adds the state of the node to the visited set.
-        visited.add(tuple(map(tuple, node.state)))
-        # The function generates all possible moves from the current state using the moves function, and for each move, it creates a new child node.
+        visited.add(tuple(map(tuple, node.state))) # list to tuple 
+        # The for loop generates all possible moves from the current state using the actions function, and for each move, it creates a new child node.
         for action in actions(node.state):
             if tuple(map(tuple, action)) not in visited: #If the state of the child node has not already been visited
-                child = Node(action, node.g+1, node) # assigning move (state), cost to reach the child node from the start node, and node as parent node
+                child = Node(action, node.g+1, node) # assigning action (state), cost to reach the child node from the start node, and node as parent node
                 queue.put((child.f(), child)) # the child node is added to the priority queue with its f-score as the priority value
 
 
@@ -166,7 +166,7 @@ def main():
     path = solvePuzzle(startState) # Solve the puzzle and get the solution path
     if path is not None: # Checks if a solution was found by the solvePuzzle() function. If a solution was found (path is not None)
         print("Solution found!") # The code prints "Solution found!" to the console.
-        print("Number of steps:",len(path)-1) # Print the number of steps in the solution path
+        print("Number of steps:",len(path)) # Print the number of steps in the solution path
         # Print the puzzle states in the solution path
         for state in path:
             printBoard(state) # Print the current puzzle state
